@@ -20,9 +20,11 @@ export default function App() {
   const [success, setSuccess] = useState(false)
   const [payload, setPayload] = useState<KitchenOutput | null>(null)
   const [formKey, setFormKey] = useState(0)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const onSubmit = useCallback(
     async (data: KitchenOutput) => {
+      setSubmitError(null)
       setLoading(true)
       await new Promise((r) => setTimeout(r, 700))
       setLoading(false)
@@ -37,6 +39,7 @@ export default function App() {
     setSuccess(false)
     setPayload(null)
     setLoading(false)
+    setSubmitError(null)
     setFormKey((k) => k + 1)
   }
 
@@ -57,8 +60,11 @@ export default function App() {
           <code className="font-mono text-xs">cols:1</code>),{' '}
           <strong className="text-neutral-800 dark:text-neutral-200">conditional</strong> promo text via{' '}
           <code className="font-mono text-xs">components.visibleIf</code>, and{' '}
-          <strong className="text-neutral-800 dark:text-neutral-200">loading / success</strong> states on the final
-          submit. See <code className="font-mono text-xs">AI_USAGE_GUIDE.md</code> for agent-oriented instructions.
+          <strong className="text-neutral-800 dark:text-neutral-200">loading / success</strong>,{' '}
+          <strong className="text-neutral-800 dark:text-neutral-200">defaultValues</strong>,{' '}
+          <code className="font-mono text-xs">fieldOrder</code> (billing fields first on step 2), and{' '}
+          <code className="font-mono text-xs">submitError</code> for API-style failures. See{' '}
+          <code className="font-mono text-xs">AI_USAGE_GUIDE.md</code> for agent-oriented instructions.
         </p>
         <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
           <span className="rounded-full bg-neutral-100 px-2 py-1 font-medium dark:bg-neutral-800">
@@ -71,6 +77,13 @@ export default function App() {
           >
             Reset demo
           </button>
+          <button
+            type="button"
+            onClick={() => setSubmitError('That email is already registered (simulated).')}
+            className="rounded-full border border-amber-300 bg-amber-50 px-2 py-1 font-medium text-amber-900 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-100 dark:hover:bg-amber-900/40"
+          >
+            Simulate API error
+          </button>
         </div>
       </header>
 
@@ -79,6 +92,8 @@ export default function App() {
           key={formKey}
           className="max-w-xl"
           schema={kitchenSinkSchema}
+          defaultValues={{ firstName: 'Jamie', lastName: 'Rivera' }}
+          fieldOrder={['email', 'plan', 'firstName', 'lastName', 'showBonus', 'bonusCode']}
           currentStep={step}
           showSubmitButton={step === 2}
           isLoading={loading}
@@ -86,6 +101,7 @@ export default function App() {
           successMessage="All set — your profile was saved (demo)."
           loadingLabel="Saving…"
           submitLabel="Finish & save"
+          submitError={submitError}
           components={{
             visibleIf: {
               bonusCode: (v) => v.showBonus === true,

@@ -1,7 +1,7 @@
 {
   "name": "@viper_droid/react-zod-form-builder",
-  "version": "1.1.0",
-  "description": "Zod → React Hook Form UI: multi-step (step:N), conditional fields (visibleIf), Tailwind grid (cols:N), loading/success states, Cursor-ready AI_USAGE_GUIDE.",
+  "version": "1.2.0",
+  "description": "Zod → React Hook Form UI: multi-step, visibleIf, grid cols, defaultValues+resetKey, fieldOrder, submitError, loading/success, Cursor-ready AI guide.",
   "keywords": [
     "react",
     "zod",
@@ -14,7 +14,9 @@
     "wizard",
     "conditional-form",
     "cursor",
-    "ai"
+    "ai",
+    "server-error",
+    "edit-form"
   ],
   "repository": {
     "type": "git",

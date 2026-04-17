@@ -59,6 +59,17 @@ Parent is responsible for toggling these flags around `async` `onSubmit`.
 
 ---
 
+## Defaults, order, and server errors
+
+| Prop | Use when |
+| ---- | -------- |
+| **`defaultValues`** | Prefill or hydrate from an API response (shallow merge over inferred defaults). |
+| **`resetKey`** | After a fetch, bump this (e.g. `row.id` or a version counter) so the form **`reset()`**s with merged values without remounting the whole component. |
+| **`fieldOrder`** | UX needs a different column order than `z.object({ … })` key order; unlisted keys append in original order. |
+| **`submitError`** | Show one top-level API failure string (`role="alert"`); clear from parent when the user retries or edits. |
+
+---
+
 ## Imports consumers need
 
 ```tsx
@@ -93,7 +104,10 @@ Requirements:
 4. For a two-column grid row, add `cols:1` or `cols:2` in describe for fields; the library applies Tailwind `col-span-*` when any field uses `cols:`.
 5. For conditional fields, either pass `components={{ ..., visibleIf: { fieldName: (v) => boolean } }}` or a custom renderer that reads `props.formValues` and returns `null`.
 6. Use `isLoading` / `isSuccess` / `successMessage` / `loadingLabel` for async UX.
-7. Type `onSubmit` as the handler for `z.infer<typeof schema>` (output type).
+7. Use `defaultValues` for prefilled/edit data and `resetKey` when loaded entity identity changes so the form resets cleanly.
+8. Use `fieldOrder` when the desired UI order differs from object key order.
+9. Use `submitError` for server-side validation or HTTP errors the schema cannot express.
+10. Type `onSubmit` as the handler for `z.infer<typeof schema>` (output type).
 
 Generate the schema and a working React component with no hand-written field markup except optional `children` buttons.
 ```

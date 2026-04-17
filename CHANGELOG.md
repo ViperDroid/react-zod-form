@@ -2,6 +2,19 @@
 
 All notable changes to **@viper_droid/react-zod-form-builder** are summarized here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] - 2026-04-17
+
+### Added
+
+- **`defaultValues`**: shallow merge over schema-inferred defaults for edit flows and prefilled forms.
+- **`resetKey`**: when it changes, the form **`reset()`**s with a fresh merge (async-loaded rows without remounting the whole tree).
+- **`fieldOrder`**: control render order; unlisted keys keep their relative order after the ordered slice.
+- **`submitError`**: server/API message rendered as a top-level `role="alert"` above the submit area.
+
+### Housekeeping
+
+- Vitest **`afterEach(cleanup)`** in `src/test/setup.ts` so DOM does not leak between tests.
+
 ## [1.1.0] - 2026-04-17
 
 ### Documentation & discoverability
@@ -26,5 +39,6 @@ All notable changes to **@viper_droid/react-zod-form-builder** are summarized he
 - **`AI_USAGE_GUIDE.md`**: agent-oriented guide and golden prompt; copied to **`dist/AI_USAGE_GUIDE.md`** on library build.
 - Default Tailwind field components and shipped **`style.css`**.
 
+[1.2.0]: https://github.com/ViperDroid/react-zod-form/releases
 [1.1.0]: https://github.com/ViperDroid/react-zod-form/releases
 [1.0.0]: https://github.com/ViperDroid/react-zod-form/releases

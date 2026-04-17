@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { ReactNode } from 'react'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import {
   useForm,
   useWatch,
@@ -132,6 +132,35 @@ export type SchemaFormProps<TSchema extends ZodObject<Record<string, ZodType>>> 
    * @defaultValue `"Submitting…"`
    */
   loadingLabel?: string
+
+  /**
+   * Shallow-merged on top of the library’s inferred defaults from the schema (empty strings,
+   * `false` for booleans, etc.). Use for **edit forms** and server-loaded rows.
+   *
+   * React Hook Form only reads `defaultValues` on first mount unless you reset — when
+   * `resetKey` changes, `SchemaForm` calls `reset()` with a fresh merge so async loads work
+   * without remounting the whole tree.
+   */
+  defaultValues?: Partial<ZodInput<TSchema>>
+
+  /**
+   * When this value **changes** (strict `!==` from the previous render), the form is
+   * `reset()` with `{ ...inferredDefaults, ...defaultValues }`. Typical pattern: `resetKey={row.id}`
+   * or `resetKey={dataVersion}` after a fetch completes.
+   */
+  resetKey?: string | number
+
+  /**
+   * Render order for fields that appear in this list (first wins). Any schema keys **not**
+   * listed are appended in their original object key order. Unknown names are ignored.
+   */
+  fieldOrder?: readonly string[]
+
+  /**
+   * Non-field error from your server or API (e.g. “Email already registered”). Rendered as an
+   * alert above the submit area; clear it from parent state when the user edits or retries.
+   */
+  submitError?: string | null
 } & Omit<React.ComponentProps<'form'>, 'onSubmit' | 'children' | 'className'>
 
 export function SchemaForm<TSchema extends ZodObject<Record<string, ZodType>>>({
@@ -148,6 +177,10 @@ export function SchemaForm<TSchema extends ZodObject<Record<string, ZodType>>>({
   isSuccess = false,
   successMessage = 'Form submitted successfully.',
   loadingLabel = 'Submitting…',
+  defaultValues: defaultValuesProp,
+  resetKey,
+  fieldOrder,
+  submitError,
   ...formProps
 }: SchemaFormProps<TSchema>) {
   assertZodObject(schema)
@@ -155,14 +188,31 @@ export function SchemaForm<TSchema extends ZodObject<Record<string, ZodType>>>({
   type FormOutput = ZodOutput<TSchema>
 
   const shape = schema.shape
+
+  const mergeDefaults = useCallback((): FormInput => {
+    return {
+      ...(buildDefaultValues(shape) as FormInput),
+      ...(defaultValuesProp ?? {}),
+    }
+  }, [shape, defaultValuesProp])
+
+  const initialDefaults = useMemo(() => mergeDefaults(), [mergeDefaults])
+
   const form = useForm<FormInput, unknown, FormOutput>({
     resolver: zodResolver(schema) as Resolver<FormInput, unknown, FormOutput>,
-    defaultValues: buildDefaultValues(shape) as DefaultValues<FormInput>,
+    defaultValues: initialDefaults as DefaultValues<FormInput>,
   })
 
-  const { control, register, handleSubmit, formState } = form
+  const { control, register, handleSubmit, formState, reset } = form
   const controlLoose = control as unknown as SchemaFormControl
   const formValues = (useWatch({ control }) ?? {}) as FormInput
+
+  const prevResetKeyRef = useRef(resetKey)
+  useEffect(() => {
+    if (prevResetKeyRef.current === resetKey) return
+    prevResetKeyRef.current = resetKey
+    reset(mergeDefaults())
+  }, [resetKey, mergeDefaults, reset])
 
   const { kinds: overrideKinds, visibleIf: componentVisibleIf } =
     splitSchemaFormComponentOverrides(componentOverrides as SchemaFormComponentOverrides<FormInput>)
@@ -178,6 +228,14 @@ export function SchemaForm<TSchema extends ZodObject<Record<string, ZodType>>>({
 
   const keys = Object.keys(shape) as (keyof typeof shape & string)[]
 
+  const orderedKeys = useMemo(() => {
+    if (!fieldOrder?.length) return keys
+    const set = new Set(keys)
+    const head = fieldOrder.filter((n): n is (typeof keys)[number] => set.has(n as (typeof keys)[number]))
+    const rest = keys.filter((k) => !head.includes(k))
+    return [...head, ...rest]
+  }, [keys, fieldOrder])
+
   const usesColumnGrid = useMemo(() => {
     const sh = schema.shape as Record<string, ZodType>
     return Object.keys(sh).some((name) => {
@@ -187,7 +245,7 @@ export function SchemaForm<TSchema extends ZodObject<Record<string, ZodType>>>({
     })
   }, [schema])
 
-  const fields = keys.map((name) => {
+  const fields = orderedKeys.map((name) => {
     if (hiddenFields?.includes(name)) {
       return null
     }
@@ -331,6 +389,15 @@ export function SchemaForm<TSchema extends ZodObject<Record<string, ZodType>>>({
           className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-950 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-100"
         >
           {successMessage}
+        </div>
+      ) : null}
+
+      {submitError ? (
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-950 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-100"
+        >
+          {submitError}
         </div>
       ) : null}
 

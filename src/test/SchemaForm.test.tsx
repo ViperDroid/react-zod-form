@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
@@ -52,5 +52,90 @@ describe('SchemaForm', () => {
       name: 'Ada',
       age: 42,
     })
+  })
+
+  it('prefills fields from defaultValues merged with inferred defaults', () => {
+    const schema = z.object({
+      title: z.string(),
+      count: z.number(),
+    })
+
+    render(
+      <SchemaForm
+        schema={schema}
+        defaultValues={{ title: 'Draft title' }}
+        onSubmit={() => undefined}
+        submitLabel="Save"
+      />,
+    )
+
+    expect(screen.getByDisplayValue('Draft title')).toBeInTheDocument()
+  })
+
+  it('respects fieldOrder for render sequence (labels / tab order)', () => {
+    const schema = z.object({
+      zebra: z.string().describe('z'),
+      apple: z.string().describe('a'),
+    })
+
+    const { container } = render(
+      <SchemaForm
+        schema={schema}
+        fieldOrder={['apple', 'zebra']}
+        onSubmit={() => undefined}
+        submitLabel="Go"
+      />,
+    )
+
+    const form = container.querySelector('form')!
+    const boxes = within(form).getAllByRole('textbox')
+    expect(boxes).toHaveLength(2)
+    expect(boxes[0]).toHaveAccessibleName(/apple/i)
+    expect(boxes[1]).toHaveAccessibleName(/zebra/i)
+  })
+
+  it('resets merged values when resetKey changes', async () => {
+    const schema = z.object({ name: z.string() })
+
+    const { rerender } = render(
+      <SchemaForm
+        schema={schema}
+        resetKey={1}
+        defaultValues={{ name: 'Version one' }}
+        onSubmit={() => undefined}
+        submitLabel="Save"
+      />,
+    )
+
+    expect(screen.getByDisplayValue('Version one')).toBeInTheDocument()
+
+    rerender(
+      <SchemaForm
+        schema={schema}
+        resetKey={2}
+        defaultValues={{ name: 'Version two' }}
+        onSubmit={() => undefined}
+        submitLabel="Save"
+      />,
+    )
+
+    expect(await screen.findByDisplayValue('Version two')).toBeInTheDocument()
+  })
+
+  it('renders submitError as an alert', () => {
+    const schema = z.object({ x: z.string() })
+
+    const { container } = render(
+      <SchemaForm
+        schema={schema}
+        submitError="That email is already taken."
+        onSubmit={() => undefined}
+        submitLabel="Send"
+      />,
+    )
+
+    const form = container.querySelector('form')!
+    const alert = within(form).getByRole('alert')
+    expect(alert).toHaveTextContent('That email is already taken.')
   })
 })
