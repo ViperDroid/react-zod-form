@@ -9,3 +9,11 @@ if (!fs.existsSync(nested)) {
 }
 
 fs.writeFileSync(path.join(dist, 'index.d.ts'), `export * from './src/lib/index'\n`)
+
+const guideSrc = path.resolve('AI_USAGE_GUIDE.md')
+const guideDest = path.join(dist, 'AI_USAGE_GUIDE.md')
+if (fs.existsSync(guideSrc)) {
+  fs.copyFileSync(guideSrc, guideDest)
+} else {
+  console.warn('AI_USAGE_GUIDE.md not found at repo root; dist will omit it.')
+}

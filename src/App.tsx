@@ -47,7 +47,7 @@ export default function App() {
           Kitchen sink demo
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white">
-          react-zod-form-builder
+          @viper_droid/react-zod-form-builder
         </h1>
         <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
           This screen exercises <strong className="text-neutral-800 dark:text-neutral-200">multi-step</strong>{' '}

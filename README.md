@@ -1,4 +1,4 @@
-# react-zod-form-builder
+# @viper_droid/react-zod-form-builder
 
 Build **type-safe** forms from **Zod** object schemas with **React Hook Form**—minimal wiring, strong inference on `onSubmit`, and escape hatches when you need custom UI.
 
@@ -31,7 +31,7 @@ Vitest + Testing Library cover field counts, validation messages, and successful
 ## Installation
 
 ```bash
-npm install react-zod-form-builder react-hook-form @hookform/resolvers zod react react-dom
+npm install @viper_droid/react-zod-form-builder react-hook-form @hookform/resolvers zod react react-dom
 ```
 
 Peer dependencies (install in your app; not bundled by this library):
@@ -54,7 +54,7 @@ Runtime dependencies (installed automatically unless deduped):
 Import the compiled stylesheet once (e.g. in your app entry):
 
 ```ts
-import 'react-zod-form-builder/style.css'
+import '@viper_droid/react-zod-form-builder/style.css'
 ```
 
 ---
@@ -62,9 +62,9 @@ import 'react-zod-form-builder/style.css'
 ## Zero-boilerplate usage
 
 ```tsx
-import { SchemaForm } from 'react-zod-form-builder'
+import { SchemaForm } from '@viper_droid/react-zod-form-builder'
 import { z } from 'zod'
-import 'react-zod-form-builder/style.css'
+import '@viper_droid/react-zod-form-builder/style.css'
 
 const schema = z.object({
   email: z.string().email().describe('you@company.com'),
@@ -106,7 +106,7 @@ Labels are always generated from the object key (e.g. `fullName` → “Full Nam
 Pass partial overrides; everything else keeps the Tailwind defaults.
 
 ```tsx
-import type { SchemaDateFieldProps } from 'react-zod-form-builder'
+import type { SchemaDateFieldProps } from '@viper_droid/react-zod-form-builder'
 import type { FieldValues } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
 import { DatePicker } from '@/components/DatePicker'

@@ -1,4 +1,4 @@
-# AI usage guide — `react-zod-form-builder`
+# AI usage guide — `@viper_droid/react-zod-form-builder`
 
 This document is for **AI coding agents** (Cursor, Copilot, ChatGPT, etc.) and humans who drive them. It tells you exactly how to generate and extend forms with this library **without inventing APIs**.
 
@@ -62,9 +62,9 @@ Parent is responsible for toggling these flags around `async` `onSubmit`.
 ## Imports consumers need
 
 ```tsx
-import { SchemaForm } from 'react-zod-form-builder'
+import { SchemaForm } from '@viper_droid/react-zod-form-builder'
 import { z } from 'zod'
-import 'react-zod-form-builder/style.css'
+import '@viper_droid/react-zod-form-builder/style.css'
 ```
 
 Optional types / helpers:
@@ -73,8 +73,8 @@ Optional types / helpers:
 import type {
   SchemaFormComponentOverrides,
   SchemaNumberFieldProps,
-} from 'react-zod-form-builder'
-import { defaultSchemaFormComponents, splitSchemaFormComponentOverrides } from 'react-zod-form-builder'
+} from '@viper_droid/react-zod-form-builder'
+import { defaultSchemaFormComponents, splitSchemaFormComponentOverrides } from '@viper_droid/react-zod-form-builder'
 ```
 
 ---
@@ -84,10 +84,10 @@ import { defaultSchemaFormComponents, splitSchemaFormComponentOverrides } from '
 Copy everything inside the block into Cursor / your agent chat:
 
 ```text
-Use the npm library `react-zod-form-builder` with Zod 3/4 and React Hook Form.
+Use the npm library `@viper_droid/react-zod-form-builder` with Zod 3/4 and React Hook Form.
 
 Requirements:
-1. Import `SchemaForm` from `react-zod-form-builder` and `import 'react-zod-form-builder/style.css'`.
+1. Import `SchemaForm` from `@viper_droid/react-zod-form-builder` and `import '@viper_droid/react-zod-form-builder/style.css'`.
 2. Define a single `z.object({ ... })` schema. Use `.describe()` for user-facing hints.
 3. For a wizard, encode steps in describe using `step:1`, `step:2`, etc., and pass `currentStep={...}` to `SchemaForm`. Fields without `step:` show on every step.
 4. For a two-column grid row, add `cols:1` or `cols:2` in describe for fields; the library applies Tailwind `col-span-*` when any field uses `cols:`.

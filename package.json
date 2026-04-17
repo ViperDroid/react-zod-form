@@ -1,6 +1,6 @@
 {
-  "name": "react-zod-form-builder",
-  "version": "0.1.0",
+  "name": "@viper_droid/react-zod-form-builder",
+  "version": "1.0.0",
   "description": "Generate type-safe React Hook Form UIs from Zod object schemas with optional Tailwind defaults and full component overrides.",
   "keywords": [
     "react",
@@ -11,6 +11,9 @@
     "typescript"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "files": [
     "dist",
