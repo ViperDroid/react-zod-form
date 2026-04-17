@@ -1,15 +1,29 @@
 {
   "name": "@viper_droid/react-zod-form-builder",
-  "version": "1.0.0",
-  "description": "Generate type-safe React Hook Form UIs from Zod object schemas with optional Tailwind defaults and full component overrides.",
+  "version": "1.1.0",
+  "description": "Zod → React Hook Form UI: multi-step (step:N), conditional fields (visibleIf), Tailwind grid (cols:N), loading/success states, Cursor-ready AI_USAGE_GUIDE.",
   "keywords": [
     "react",
     "zod",
     "react-hook-form",
     "form",
     "schema",
-    "typescript"
+    "typescript",
+    "tailwind",
+    "multi-step",
+    "wizard",
+    "conditional-form",
+    "cursor",
+    "ai"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ViperDroid/react-zod-form.git"
+  },
+  "homepage": "https://github.com/ViperDroid/react-zod-form#readme",
+  "bugs": {
+    "url": "https://github.com/ViperDroid/react-zod-form/issues"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -18,7 +32,8 @@
   "files": [
     "dist",
     "README.md",
-    "AI_USAGE_GUIDE.md"
+    "AI_USAGE_GUIDE.md",
+    "CHANGELOG.md"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

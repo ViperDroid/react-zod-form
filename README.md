@@ -1,6 +1,15 @@
 # @viper_droid/react-zod-form-builder
 
+[![npm version](https://img.shields.io/npm/v/@viper_droid/react-zod-form-builder.svg)](https://www.npmjs.com/package/@viper_droid/react-zod-form-builder)
+[![npm license](https://img.shields.io/npm/l/@viper_droid/react-zod-form-builder.svg)](https://www.npmjs.com/package/@viper_droid/react-zod-form-builder)
+
 Build **type-safe** forms from **Zod** object schemas with **React Hook Form**—minimal wiring, strong inference on `onSubmit`, and escape hatches when you need custom UI.
+
+| Where | Link |
+| ----- | ---- |
+| **npm** | [https://www.npmjs.com/package/@viper_droid/react-zod-form-builder](https://www.npmjs.com/package/@viper_droid/react-zod-form-builder) |
+| **Source & issues** | [https://github.com/ViperDroid/react-zod-form](https://github.com/ViperDroid/react-zod-form) |
+| **Changelog** | [CHANGELOG.md](./CHANGELOG.md) |
 
 ---
 
@@ -14,9 +23,10 @@ Build **type-safe** forms from **Zod** object schemas with **React Hook Form**�
 - **`hiddenFields`** — skip rendering named keys (static hide); combine with schema design if validation must change when a field is not shown.
 - **`formValues` on every field renderer** — watched values from React Hook Form so custom components can branch or **`return null`** to hide a field reactively.
 - **Multi-step** — put `step:N` in `.describe()` and pass **`currentStep`**; fields without `step:` stay visible on every step.
+- **Conditional fields** — **`components.visibleIf`**: per-field `(formValues) => boolean` map; works with watched RHF values.
 - **Grid spans** — put `cols:N` in `.describe()` to apply Tailwind `col-span-N` inside an auto 2-column grid.
 - **Loading / success** — **`isLoading`**, **`isSuccess`**, and customizable **`loadingLabel`** / **`successMessage`** on `SchemaForm`.
-- **AI guide** — see **`AI_USAGE_GUIDE.md`** for Cursor/agent-oriented workflows and a copy-paste “golden prompt”.
+- **AI-ready** — **`AI_USAGE_GUIDE.md`** (also under `dist/` after build) for Cursor/Copilot: conventions, anti-patterns, and a **golden prompt** you can paste into an agent chat.
 
 ### Tests
 
@@ -98,6 +108,52 @@ No manual `<input>` list: the schema is the single source of truth.
 - **Booleans** — `.describe()` is applied as the native **`title`** tooltip on the checkbox.
 
 Labels are always generated from the object key (e.g. `fullName` → “Full Name”).
+
+---
+
+## Power features (snippets)
+
+**Multi-step** — metadata in `.describe()`, `currentStep` on the form (fields without `step:` show on every step):
+
+```ts
+z.object({
+  name: z.string().describe('Full name | step:1'),
+  email: z.string().describe('Work email | step:2'),
+})
+// <SchemaForm currentStep={step} … />
+```
+
+**Conditional visibility** — `visibleIf` on the same object as component overrides:
+
+```tsx
+<SchemaForm
+  schema={schema}
+  components={{
+    visibleIf: {
+      promoCode: (v) => v.acceptPromo === true,
+    },
+  }}
+/>
+```
+
+**Two-column row** — when any field uses `cols:`, the field area becomes a 2-column grid:
+
+```ts
+firstName: z.string().describe('Jane | cols:1 step:1'),
+lastName: z.string().describe('Doe | cols:1 step:1'),
+```
+
+**Async submit UX**:
+
+```tsx
+<SchemaForm
+  isLoading={saving}
+  isSuccess={done}
+  loadingLabel="Saving…"
+  successMessage="Saved."
+  …
+/>
+```
 
 ---
 
