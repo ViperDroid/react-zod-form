@@ -13,6 +13,10 @@ Build **type-safe** forms from **Zod** object schemas with **React Hook Form**�
 - **Shipped CSS** — default primitives use utility classes bundled into `style.css` (no Tailwind setup required in consuming apps).
 - **`hiddenFields`** — skip rendering named keys (static hide); combine with schema design if validation must change when a field is not shown.
 - **`formValues` on every field renderer** — watched values from React Hook Form so custom components can branch or **`return null`** to hide a field reactively.
+- **Multi-step** — put `step:N` in `.describe()` and pass **`currentStep`**; fields without `step:` stay visible on every step.
+- **Grid spans** — put `cols:N` in `.describe()` to apply Tailwind `col-span-N` inside an auto 2-column grid.
+- **Loading / success** — **`isLoading`**, **`isSuccess`**, and customizable **`loadingLabel`** / **`successMessage`** on `SchemaForm`.
+- **AI guide** — see **`AI_USAGE_GUIDE.md`** for Cursor/agent-oriented workflows and a copy-paste “golden prompt”.
 
 ### Tests
 

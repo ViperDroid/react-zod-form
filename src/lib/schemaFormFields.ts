@@ -67,3 +67,26 @@ export type SchemaFormComponents<TFieldValues extends FieldValues = FieldValues>
   date: ComponentType<SchemaDateFieldProps<TFieldValues>>
   unsupported: ComponentType<SchemaUnsupportedFieldProps<TFieldValues>>
 }>
+
+/**
+ * Same as {@link SchemaFormComponents} plus an optional `visibleIf` map for declarative,
+ * per-field visibility (field name → predicate on watched values).
+ */
+export type SchemaFormComponentOverrides<TFieldValues extends FieldValues = FieldValues> =
+  SchemaFormComponents<TFieldValues> & {
+    visibleIf?: Partial<Record<string, (values: TFieldValues) => boolean>>
+  }
+
+/** Split `visibleIf` from concrete field-kind components for internal use. */
+export function splitSchemaFormComponentOverrides<TFieldValues extends FieldValues>(
+  overrides?: SchemaFormComponentOverrides<TFieldValues>,
+): {
+  kinds: SchemaFormComponents<TFieldValues>
+  visibleIf?: Partial<Record<string, (values: TFieldValues) => boolean>>
+} {
+  if (!overrides) {
+    return { kinds: {} }
+  }
+  const { visibleIf, ...kinds } = overrides
+  return { kinds, visibleIf }
+}

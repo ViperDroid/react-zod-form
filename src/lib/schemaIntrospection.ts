@@ -14,9 +14,48 @@ import type {
 
 export type FieldKind = 'string' | 'number' | 'boolean' | 'enum' | 'date' | 'unsupported'
 
+const META_STEP = /(?:^|[\s,|])step:\s*(\d+)/i
+const META_COLS = /(?:^|[\s,|])cols:\s*(\d+)/i
+
 /** Prefer `.describe()` on the field or its unwrapped leaf (Zod v3/v4). */
 export function getFieldDescription(fieldSchema: ZodType, leaf: ZodType): string | undefined {
   return fieldSchema.description ?? leaf.description
+}
+
+/**
+ * Reads `step:N` from a `.describe()` string (e.g. `Account email | step:2`).
+ * Used with {@link SchemaFormProps.currentStep} to show only fields for that wizard step.
+ */
+export function getFieldStepFromDescription(description: string | undefined): number | undefined {
+  if (!description) return undefined
+  const m = description.match(META_STEP)
+  if (!m) return undefined
+  const n = Number.parseInt(m[1]!, 10)
+  return Number.isNaN(n) || n < 1 ? undefined : n
+}
+
+/**
+ * Reads `cols:N` from a `.describe()` string for Tailwind grid span (`col-span-N`).
+ * N is clamped between 1 and 12.
+ */
+export function getFieldColsFromDescription(description: string | undefined): number | undefined {
+  if (!description) return undefined
+  const m = description.match(META_COLS)
+  if (!m) return undefined
+  const n = Number.parseInt(m[1]!, 10)
+  if (Number.isNaN(n) || n < 1) return undefined
+  return Math.min(n, 12)
+}
+
+/**
+ * Removes `step:` and `cols:` metadata tokens from a describe string so the remainder
+ * can be used as a human-visible placeholder or hint.
+ */
+export function stripLayoutMetaFromDescription(description: string | undefined): string | undefined {
+  if (!description) return undefined
+  let s = description.replace(META_STEP, ' ').replace(META_COLS, ' ')
+  s = s.replace(/[\s,|]{2,}/g, ' ').replace(/^[\s,|]+|[\s,|]+$/g, '').trim()
+  return s.length > 0 ? s : undefined
 }
 
 export function unwrapToLeaf(schema: ZodType): ZodType {
